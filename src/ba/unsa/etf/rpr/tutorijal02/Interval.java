@@ -69,6 +69,9 @@ public class Interval {
     }
 
     public Interval intersect(Interval drugiInterval){
+        //pametan nacin bi bio da provjerimo koji je ispred kojeg i da to zapamtimo tj sortiramo i da ne moram po dvije verzije
+        
+
         //nemaju presjeka
         if((getGornjaGranicaIntervala() < drugiInterval.getDonjaGranicaIntervala() && getDonjaGranicaIntervala() < drugiInterval.getGornjaGranicaIntervala()) ||
                 (drugiInterval.getGornjaGranicaIntervala() < getDonjaGranicaIntervala() && drugiInterval.getDonjaGranicaIntervala() < drugiInterval.getGornjaGranicaIntervala())
