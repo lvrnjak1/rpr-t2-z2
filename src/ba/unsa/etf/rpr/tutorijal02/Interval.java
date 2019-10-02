@@ -68,42 +68,64 @@ public class Interval {
                 (getDonjaGranicaIntervala() < tackaKojuProvjeravamo && tackaKojuProvjeravamo < getGornjaGranicaIntervala()));
     }
 
+    public boolean tangent(Interval drugiInterval){
+        //funkcija koja provjerava da li je gornja prvog jednaka gornjoj drugog i da li su obe ukljucene
+        return getGornjaGranicaIntervala() == drugiInterval.getDonjaGranicaIntervala() &&
+                isUkljucenaGornjaGranicaIntervala() && drugiInterval.isUkljucenaDonjaGranicaIntervala();
+    }
+
     public Interval intersect(Interval drugiInterval){
-        //pametan nacin bi bio da provjerimo koji je ispred kojeg i da to zapamtimo tj sortiramo i da ne moram po dvije verzije
-        
 
-        //nemaju presjeka
-        if((getGornjaGranicaIntervala() < drugiInterval.getDonjaGranicaIntervala() && getDonjaGranicaIntervala() < drugiInterval.getGornjaGranicaIntervala()) ||
-                (drugiInterval.getGornjaGranicaIntervala() < getDonjaGranicaIntervala() && drugiInterval.getDonjaGranicaIntervala() < drugiInterval.getGornjaGranicaIntervala())
-        ) return  new Interval();
+        //napraviti da je i1 interval koji ima manju donju granicu (prvi je na brojnoj liniji)
+        Interval i1 = new Interval(getDonjaGranicaIntervala(), getGornjaGranicaIntervala(), isUkljucenaDonjaGranicaIntervala(),
+                isUkljucenaGornjaGranicaIntervala());
+        Interval i2 = new Interval(drugiInterval.getDonjaGranicaIntervala(), drugiInterval.getGornjaGranicaIntervala(),
+                drugiInterval.isUkljucenaDonjaGranicaIntervala(), drugiInterval.isUkljucenaGornjaGranicaIntervala());
 
-        //dodiruju se (ako su obje ukljucene vratit cu interval od jedne tacke)
-        if(getGornjaGranicaIntervala() == drugiInterval.getGornjaGranicaIntervala() && isUkljucenaGornjaGranicaIntervala() && drugiInterval.isUkljucenaDonjaGranicaIntervala())
-            return  new Interval(getDonjaGranicaIntervala(), getDonjaGranicaIntervala(), true, true);
-        if(drugiInterval.getGornjaGranicaIntervala() == getGornjaGranicaIntervala() && drugiInterval.isUkljucenaGornjaGranicaIntervala() && isUkljucenaDonjaGranicaIntervala())
-            return  new Interval(getDonjaGranicaIntervala(), getDonjaGranicaIntervala(), true, true);
+        if(i2.getDonjaGranicaIntervala() < i1.getDonjaGranicaIntervala()){
+            swapIntervals(i1, i2);
+        }
 
-
-
-        //preklapaju se
-        if(getDonjaGranicaIntervala() == drugiInterval.getDonjaGranicaIntervala() && getGornjaGranicaIntervala() == drugiInterval.getGornjaGranicaIntervala())
-            return new Interval(getDonjaGranicaIntervala(), getGornjaGranicaIntervala(), isUkljucenaDonjaGranicaIntervala() && drugiInterval.isUkljucenaDonjaGranicaIntervala(),
-                    isUkljucenaGornjaGranicaIntervala() && drugiInterval.isUkljucenaDonjaGranicaIntervala());
-
-        //obuhvataju se
-        if(isIn(drugiInterval.getDonjaGranicaIntervala()) && isIn(drugiInterval.getGornjaGranicaIntervala()))
-            return drugiInterval;
-
-        if(drugiInterval.isIn(getDonjaGranicaIntervala()) && drugiInterval.isIn(getGornjaGranicaIntervala()))
-            return this;
+        //ne presjecaju se
+        if(i2.getDonjaGranicaIntervala() > i1.getGornjaGranicaIntervala() && !i1.tangent(i2)){
+            return new Interval();
+        }
 
         //presjecaju se
-        if(isIn(drugiInterval.getDonjaGranicaIntervala()) && !isIn(drugiInterval.getGornjaGranicaIntervala()))
-            return new Interval(drugiInterval.getDonjaGranicaIntervala(), getGornjaGranicaIntervala(), drugiInterval.isUkljucenaDonjaGranicaIntervala(), isUkljucenaGornjaGranicaIntervala());
-        if(drugiInterval.isIn(getDonjaGranicaIntervala()) && !drugiInterval.isIn(getGornjaGranicaIntervala()))
-            return new Interval(getDonjaGranicaIntervala(), drugiInterval.getGornjaGranicaIntervala(), isUkljucenaDonjaGranicaIntervala(), drugiInterval.isUkljucenaGornjaGranicaIntervala());
+        double donja = i2.getDonjaGranicaIntervala();
+        boolean ukljucena_donja = i2.isUkljucenaDonjaGranicaIntervala();
+        if(i1.getDonjaGranicaIntervala() == i2.getDonjaGranicaIntervala()){
+            ukljucena_donja = i1.isUkljucenaDonjaGranicaIntervala() && i2.isUkljucenaDonjaGranicaIntervala();
+        }
 
-        return new Interval();
+        double gornja = i1.getGornjaGranicaIntervala();
+        boolean ukljucena_gornja = i1.isUkljucenaGornjaGranicaIntervala();
+        if(i1.getGornjaGranicaIntervala() > i2.getGornjaGranicaIntervala()){
+            gornja = i2.getGornjaGranicaIntervala();
+            ukljucena_gornja = i2.isUkljucenaGornjaGranicaIntervala();
+        }else if(i1.getGornjaGranicaIntervala() == i2.getGornjaGranicaIntervala()){
+            ukljucena_gornja = i1.isUkljucenaGornjaGranicaIntervala() && i2.isUkljucenaGornjaGranicaIntervala();
+        }
+
+        return new Interval(donja, gornja, ukljucena_donja, ukljucena_gornja);
+    }
+
+    private void swapIntervals(Interval i1, Interval i2) {
+        double tmp = i1.getDonjaGranicaIntervala();
+        i1.setDonjaGranicaIntervala(i2.getDonjaGranicaIntervala());
+        i2.setDonjaGranicaIntervala(tmp);
+
+        tmp = i1.getGornjaGranicaIntervala();
+        i1.setGornjaGranicaIntervala(i2.getGornjaGranicaIntervala());
+        i2.setGornjaGranicaIntervala(tmp);
+
+        boolean tmp_ukljuceno = i1.isUkljucenaDonjaGranicaIntervala();
+        i1.setUkljucenaDonjaGranicaIntervala(i2.isUkljucenaDonjaGranicaIntervala());
+        i2.setUkljucenaDonjaGranicaIntervala(tmp_ukljuceno);
+
+        tmp_ukljuceno = i1.isUkljucenaGornjaGranicaIntervala();
+        i1.setUkljucenaGornjaGranicaIntervala(i2.isUkljucenaGornjaGranicaIntervala());
+        i2.setUkljucenaGornjaGranicaIntervala(tmp_ukljuceno);
     }
 
     public  static Interval intersect(Interval prviInterval, Interval drugiInterval){
@@ -129,7 +151,7 @@ public class Interval {
     @Override
     public String toString() {
         if(isNull()) return "()";
-        String ispis = new String();
+        String ispis = "";
         if(isUkljucenaDonjaGranicaIntervala()) ispis += "[";
         else ispis += "(";
 
