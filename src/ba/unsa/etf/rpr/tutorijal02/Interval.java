@@ -87,7 +87,7 @@ public class Interval {
         }
 
         //ne presjecaju se
-        if(i2.getDonjaGranicaIntervala() > i1.getGornjaGranicaIntervala() && !i1.tangent(i2)){
+        if(i2.getDonjaGranicaIntervala() > i1.getGornjaGranicaIntervala() || ( i2.getDonjaGranicaIntervala() == i1.getGornjaGranicaIntervala() && !i1.tangent(i2))){
             return new Interval();
         }
 

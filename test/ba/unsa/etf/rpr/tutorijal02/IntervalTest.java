@@ -1,5 +1,7 @@
 package ba.unsa.etf.rpr.tutorijal02;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class IntervalTest {
@@ -90,5 +92,53 @@ class IntervalTest {
         Interval i2 = new Interval(2.2, 3.6, false, true);
         Interval i3 = Interval.intersect(i, i2);
         assertEquals("(2.2,2.5)", i3.toString());
+    }
+
+    @Test
+    void intersect4() {
+        Interval i = new Interval(-1.1, 2.5, true, false);
+        Interval i2 = new Interval(2.5, 3.6, false, true);
+        Interval i3 = Interval.intersect(i, i2);
+        assertEquals("()", i3.toString());
+    }
+
+    @Test
+    void intersect5() {
+        Interval i = new Interval(-1.1, 2.5, true, true);
+        Interval i2 = new Interval(2.5, 3.6, false, true);
+        Interval i3 = Interval.intersect(i, i2);
+        assertEquals("()", i3.toString());
+    }
+
+    @Test
+    void intersect6() {
+        Interval i = new Interval(-1.1, 2.5, true, true);
+        Interval i2 = new Interval(2.5, 3.6, true, true);
+        Interval i3 = Interval.intersect(i2, i);
+        assertEquals("[2.5,2.5]", i3.toString());
+    }
+
+    @Test
+    void intersect7() {
+        Interval i = new Interval(-1.1, 2.5, true, true);
+        Interval i2 = new Interval(3, 3.6, false, true);
+        Interval i3 = Interval.intersect(i, i2);
+        assertEquals("()", i3.toString());
+    }
+
+    @Test
+    void intersect8() {
+        Interval i = new Interval(-1.1, 12.5, true, true);
+        Interval i2 = new Interval(3, 3.6, false, true);
+        Interval i3 = Interval.intersect(i, i2);
+        assertEquals("(3.0,3.6]", i3.toString());
+    }
+
+    @Test
+    void intersect9() {
+        Interval i = new Interval(-1.1, 12.5, true, true);
+        Interval i2 = new Interval(3, 3.6, false, true);
+        Interval i3 = Interval.intersect(i2, i);
+        assertEquals("(3.0,3.6]", i3.toString());
     }
 }
