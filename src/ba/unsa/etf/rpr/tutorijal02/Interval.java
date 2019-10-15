@@ -1,13 +1,27 @@
 package ba.unsa.etf.rpr.tutorijal02;
 
-import java.util.Objects;
-
 public class Interval {
     private double donjaGranicaIntervala;
     private double gornjaGranicaIntervala;
     private boolean ukljucenaDonjaGranicaIntervala;
     private boolean ukljucenaGornjaGranicaIntervala;
 
+    public Interval(double donjaGranicaIntervala, double gornjaGranicaIntervala, boolean ukljucenaDonjaGranicaIntervala, boolean jeUkljucenaGornjaGranicaIntervala)
+            throws  IllegalArgumentException {
+        if(donjaGranicaIntervala > gornjaGranicaIntervala)
+            throw new IllegalArgumentException("Donja granica je veca od gornje");
+        setDonjaGranicaIntervala(donjaGranicaIntervala);
+        setGornjaGranicaIntervala(gornjaGranicaIntervala);
+        setUkljucenaDonjaGranicaIntervala(ukljucenaDonjaGranicaIntervala);
+        setUkljucenaGornjaGranicaIntervala(jeUkljucenaGornjaGranicaIntervala);
+    }
+
+    public  Interval() {
+        setDonjaGranicaIntervala(0);
+        setGornjaGranicaIntervala(0);
+        setUkljucenaDonjaGranicaIntervala(false);
+        setUkljucenaGornjaGranicaIntervala(false);
+    }
 
     public double getDonjaGranicaIntervala() {
         return donjaGranicaIntervala;
@@ -41,23 +55,6 @@ public class Interval {
         this.ukljucenaGornjaGranicaIntervala = ukljucenaGornjaGranicaIntervala;
     }
 
-    public Interval(double donjaGranicaIntervala, double gornjaGranicaIntervala, boolean ukljucenaDonjaGranicaIntervala, boolean jeUkljucenaGornjaGranicaIntervala)
-    throws  IllegalArgumentException {
-        if(donjaGranicaIntervala > gornjaGranicaIntervala)
-            throw new IllegalArgumentException("Donja granica je veca od gornje");
-        setDonjaGranicaIntervala(donjaGranicaIntervala);
-        setGornjaGranicaIntervala(gornjaGranicaIntervala);
-        setUkljucenaDonjaGranicaIntervala(ukljucenaDonjaGranicaIntervala);
-        setUkljucenaGornjaGranicaIntervala(jeUkljucenaGornjaGranicaIntervala);
-    }
-
-    public  Interval() {
-        setDonjaGranicaIntervala(0);
-        setGornjaGranicaIntervala(0);
-        setUkljucenaDonjaGranicaIntervala(false);
-        setUkljucenaGornjaGranicaIntervala(false);
-    }
-
     public boolean isNull(){
         return getDonjaGranicaIntervala() == 0 && getGornjaGranicaIntervala() == 0 && getDonjaGranicaIntervala() == 0 && getGornjaGranicaIntervala() == 0;
     }
@@ -68,15 +65,11 @@ public class Interval {
                 (getDonjaGranicaIntervala() < tackaKojuProvjeravamo && tackaKojuProvjeravamo < getGornjaGranicaIntervala()));
     }
 
-    public boolean tangent(Interval drugiInterval){
-        //funkcija koja provjerava da li je gornja prvog jednaka gornjoj drugog i da li su obe ukljucene
-        return getGornjaGranicaIntervala() == drugiInterval.getDonjaGranicaIntervala() &&
-                isUkljucenaGornjaGranicaIntervala() && drugiInterval.isUkljucenaDonjaGranicaIntervala();
-    }
 
     public Interval intersect(Interval drugiInterval){
 
         //napraviti da je i1 interval koji ima manju donju granicu (prvi je na brojnoj liniji)
+        //da ne bi posmatrali dupli broj slucajeva
         Interval i1 = new Interval(getDonjaGranicaIntervala(), getGornjaGranicaIntervala(), isUkljucenaDonjaGranicaIntervala(),
                 isUkljucenaGornjaGranicaIntervala());
         Interval i2 = new Interval(drugiInterval.getDonjaGranicaIntervala(), drugiInterval.getGornjaGranicaIntervala(),
@@ -110,6 +103,12 @@ public class Interval {
         return new Interval(donja, gornja, ukljucena_donja, ukljucena_gornja);
     }
 
+    private boolean tangent(Interval drugiInterval){
+        //funkcija koja provjerava da li je gornja prvog jednaka donjoj granici drugog i da li su obe ukljucene
+        return getGornjaGranicaIntervala() == drugiInterval.getDonjaGranicaIntervala() &&
+                isUkljucenaGornjaGranicaIntervala() && drugiInterval.isUkljucenaDonjaGranicaIntervala();
+    }
+
     private void swapIntervals(Interval i1, Interval i2) {
         double tmp = i1.getDonjaGranicaIntervala();
         i1.setDonjaGranicaIntervala(i2.getDonjaGranicaIntervala());
@@ -141,11 +140,6 @@ public class Interval {
                 Double.compare(interval.gornjaGranicaIntervala, gornjaGranicaIntervala) == 0 &&
                 ukljucenaDonjaGranicaIntervala == interval.ukljucenaDonjaGranicaIntervala &&
                 ukljucenaGornjaGranicaIntervala == interval.ukljucenaGornjaGranicaIntervala;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(donjaGranicaIntervala, gornjaGranicaIntervala, ukljucenaDonjaGranicaIntervala, ukljucenaGornjaGranicaIntervala);
     }
 
     @Override
